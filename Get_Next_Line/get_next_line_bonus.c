@@ -1,4 +1,4 @@
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_saver(char *save)
 {
@@ -80,29 +80,34 @@ char	*ft_read_save(int fd, char *save)
 
 char	*get_next_line(int fd)
 {
-	static char	*save;
+	static char	*save[10240];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE < 1)
+	if (fd < 0 || BUFFER_SIZE < 1 || fd > 10240)
 		return (NULL);
-	save = ft_read_save(fd, save);
-	if (!save)
+	save[fd] = ft_read_save(fd, save[fd]);
+	if (!save[fd])
 		return (NULL);
-	line = ft_get_line(save);
-	save = ft_saver(save);	
+	line = ft_get_line(save[fd]);
+	save[fd] = ft_saver(save[fd]);	
 	return (line);
 }
 
-// #include <stdio.h>
-// #include <fcntl.h>
 // int main()
 // {
-// 	int	fd;
+// 	int	fd[2];
 // 	char	*line;
+//     int i = 0;
 
-// 	fd = open("test.txt", O_RDONLY);
-// 	while ((line = get_next_line(fd)) != NULL)
+// 	fd[0] = open("test.txt", O_RDONLY);
+//     fd[1] = open("test_2.txt", O_RDONLY);
+// 	while ((line = get_next_line(fd[i])) != NULL && i < 2)
 // 	{
 // 		printf("%s\n", line);
+//         if (line == NULL)
+//         {
+//             close(fd[i]);
+//             i++;
+//         }
 // 	}
 // }
