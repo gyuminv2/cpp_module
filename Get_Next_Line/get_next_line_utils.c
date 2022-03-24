@@ -1,32 +1,26 @@
 #include "get_next_line.h"
 
-void	*ft_memset(void *b, size_t len)
+void	ft_memset(void *b, size_t len)
 {
 	size_t	i;
-    char    *s;
+	char	*s;
 
-    s = (char *)b;
+	s = (char *)b;
 	i = 0;
-    if (!s)
-        return (NULL);
 	while (i < len)
 	{
-        s[i] = '\0';
+		s[i] = '\0';
 		i++;
 	}
-    return (s);
 }
 
-void	*ft_malloc_set(size_t count, size_t size)
+void	*ft_calloc(size_t count, size_t size)
 {
 	void	*p;
-    
-    if (!count || !size)
-    {
-        count = 1;
-        size = 1;
-    }
-	p = (void *)malloc(count * size);
+
+	if (!count || !size)
+		return (NULL);
+	p = malloc(count * size);
 	ft_memset(p, count * size);
 	return (p);
 }
@@ -36,7 +30,7 @@ size_t	ft_strlen(char *s)
 	size_t	i;
 
 	i = 0;
-    if (!s)
+	if (!s)
 		return (0);
 	while (s[i])
 		i++;
@@ -47,10 +41,14 @@ char	*ft_strchr(char *s, int c)
 {
 	char	*str;
 
+	if (!s)
+		return (0);
 	str = (char *)s;
-	while (*str != c && *str != 0)
+	if (c == '\0')
+		return ((char *)&s[ft_strlen(s)]);
+	while (*str != (char)c && *str != 0)
 		str++;
-	if (*str == c)
+	if (*str == (char)c)
 		return (str);
 	else
 		return (NULL);
@@ -62,7 +60,9 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 	int		j;
 
-    if (!s1 || !s2)
+	if (!s1)
+		s1 = ft_calloc(1, 1);
+	if(!s1 || !s2)
 		return (NULL);
 	save = malloc(sizeof(*s1) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!save)
@@ -80,7 +80,7 @@ char	*ft_strjoin(char *s1, char *s2)
 		save[j++] = s2[i];
 		i++;
 	}
-	save[j] = '\0';
-    free(s1);
+	save[j] = 0;
+	free(s1);
 	return (save);
 }

@@ -14,13 +14,14 @@ char	*ft_saver(char *save)
 		free(save);
 		return (NULL);
 	}
-	cut_char = ft_malloc_set(sizeof(char) * (ft_strlen(save) - i), sizeof(char));
+	cut_char = ft_calloc(sizeof(char) * (ft_strlen(save) - i + 1), sizeof(char));
 	if (!cut_char)
 		return (NULL);
 	i++;
 	i2 = 0;
 	while (save[i])
 		cut_char[i2++] = save[i++];
+	cut_char[i2] = '\0';
 	free(save);
 	return (cut_char);
 }
@@ -35,7 +36,7 @@ char	*ft_get_line(char *save)
 		return (NULL);
 	while (save[i] != '\0' && save[i] != '\n')
 		i++;
-	line = ft_malloc_set((i + 2), sizeof(char));
+	line = ft_calloc((i + 2), sizeof(char));
 	if (!line)
 		return (NULL);
 	i = 0;
@@ -54,12 +55,10 @@ char	*ft_read_save(int fd, char *save)
 	char	*buff;
 	int		bytes;
 
-	if (!save)
-		save = ft_malloc_set(sizeof(char), sizeof(char));
 	if (BUFFER_SIZE == 2147483647)
-		buff = ft_malloc_set(BUFFER_SIZE, sizeof(char));
+		buff = ft_calloc(BUFFER_SIZE, sizeof(char));
 	else
-		buff = ft_malloc_set((BUFFER_SIZE + 1), sizeof(char));
+		buff = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (!buff)
 		return (NULL);
 	bytes = 1;
@@ -89,7 +88,7 @@ char	*get_next_line(int fd)
 	if (!save)
 		return (NULL);
 	line = ft_get_line(save);
-	save = ft_saver(save);	
+	save = ft_saver(save);
 	return (line);
 }
 
@@ -97,12 +96,19 @@ char	*get_next_line(int fd)
 // #include <fcntl.h>
 // int main()
 // {
-// 	int	fd;
+// 	int	fd = open("test.txt", O_RDONLY);
 // 	char	*line;
 
-// 	fd = open("test.txt", O_RDONLY);
-// 	while ((line = get_next_line(fd)) != NULL)
+// 	while (1)
 // 	{
-// 		printf("%s\n", line);
+// 		line = get_next_line(fd);
+// 		if (line != NULL)
+// 		{
+// 			printf("%s", line);
+// 			free(line);
+// 		}
+// 		if (line == NULL)
+// 			break;
 // 	}
+// 	return (0);
 // }
