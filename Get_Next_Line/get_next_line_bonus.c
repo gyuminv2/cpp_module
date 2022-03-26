@@ -14,7 +14,7 @@ char	*ft_saver(char *save)
 		free(save);
 		return (NULL);
 	}
-	cut_char = ft_calloc(sizeof(char) * (ft_strlen(save) - i + 1), sizeof(char));
+	cut_char = (char *)malloc(sizeof(char) * (ft_strlen(save) - i + 1));
 	if (!cut_char)
 		return (NULL);
 	i++;
@@ -26,7 +26,7 @@ char	*ft_saver(char *save)
 	return (cut_char);
 }
 
-char	*ft_get_line(char *save)
+char	*ft_print_line(char *save)
 {
 	int		i;
 	char	*line;
@@ -45,68 +45,49 @@ char	*ft_get_line(char *save)
 		line[i] = save[i];
 		i++;
 	}
-	if (save[i] && save[i] == '\n')
+	if (save[i] == '\n')
 		line[i++] = '\n';
 	return (line);
 }
 
-char	*ft_read_save(int fd, char *save)
+char	*ft_read_join(int fd, char *save)
 {
-	char	*buff;
-	int		bytes;
+	char	*buffer;
+	int		size;
 
 	if (BUFFER_SIZE == 2147483647)
-		buff = ft_calloc(BUFFER_SIZE, sizeof(char));
+		buffer = ft_calloc(BUFFER_SIZE, sizeof(char));
 	else
-		buff = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
-	if (!buff)
+		buffer = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
+	if (!buffer)
 		return (NULL);
-	bytes = 1;
-	while (bytes != 0 && !ft_strchr(save, '\n'))
+	size = 1;
+	while (size != 0 && !ft_strchr(save, '\n'))
 	{
-		bytes = read(fd, buff, BUFFER_SIZE);
-		if (bytes == -1)
+		size = read(fd, buffer, BUFFER_SIZE);
+		if (size == -1)
 		{
-			free(buff);
+			free(buffer);
 			return (NULL);
 		}
-		buff[bytes] = 0;
-		save = ft_strjoin(save, buff);
+		buffer[size] = '\0';
+		save = ft_strjoin(save, buffer);
 	}
-	free(buff);
+	free(buffer);
 	return (save);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*save[10239];
+	static char	*save[255];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE < 1 || fd > 10240)
+	if (fd < 0 || BUFFER_SIZE < 1 || fd > 256)
 		return (NULL);
-	save[fd] = ft_read_save(fd, save[fd]);
+	save[fd] = ft_read_join(fd, save[fd]);
 	if (!save[fd])
 		return (NULL);
-	line = ft_get_line(save[fd]);
+	line = ft_print_line(save[fd]);
 	save[fd] = ft_saver(save[fd]);
 	return (line);
 }
-
-// int main()
-// {
-// 	int	fd[2];
-// 	char	*line;
-//     int i = 0;
-
-// 	fd[0] = open("test.txt", O_RDONLY);
-//     fd[1] = open("test_2.txt", O_RDONLY);
-// 	while ((line = get_next_line(fd[i])) != NULL && i < 2)
-// 	{
-// 		printf("%s\n", line);
-//         if (line == NULL)
-//         {
-//             close(fd[i]);
-//             i++;
-//         }
-// 	}
-// }

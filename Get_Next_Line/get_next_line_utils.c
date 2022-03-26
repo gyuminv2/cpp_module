@@ -62,24 +62,18 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	if (!s1)
 		s1 = ft_calloc(1, 1);
-	if(!s1 || !s2)
+	if (!s1 || !s2)
 		return (NULL);
 	save = malloc(sizeof(*s1) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!save)
 		return (NULL);
-	i = 0;
+	i = -1;
 	j = 0;
-	while (s1[i])
-	{
+	while (s1[++i])
 		save[j++] = s1[i];
-		i++;
-	}
-	i = 0;
-	while (s2[i])
-	{
+	i = -1;
+	while (s2[++i])
 		save[j++] = s2[i];
-		i++;
-	}
 	save[j] = 0;
 	free(s1);
 	return (save);

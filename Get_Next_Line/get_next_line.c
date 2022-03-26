@@ -14,7 +14,7 @@ char	*ft_saver(char *save)
 		free(save);
 		return (NULL);
 	}
-	cut_char = ft_calloc(sizeof(char) * (ft_strlen(save) - i + 1), sizeof(char));
+	cut_char = ft_calloc((ft_strlen(save) - i + 1), sizeof(char));
 	if (!cut_char)
 		return (NULL);
 	i++;
@@ -26,7 +26,7 @@ char	*ft_saver(char *save)
 	return (cut_char);
 }
 
-char	*ft_get_line(char *save)
+char	*ft_print_line(char *save)
 {
 	int		i;
 	char	*line;
@@ -50,30 +50,30 @@ char	*ft_get_line(char *save)
 	return (line);
 }
 
-char	*ft_read_save(int fd, char *save)
+char	*ft_read_join(int fd, char *save)
 {
-	char	*buff;
-	int		bytes;
+	char	*buffer;
+	int		size;
 
 	if (BUFFER_SIZE == 2147483647)
-		buff = ft_calloc(BUFFER_SIZE, sizeof(char));
+		buffer = ft_calloc(BUFFER_SIZE, sizeof(char));
 	else
-		buff = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
-	if (!buff)
+		buffer = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
+	if (!buffer)
 		return (NULL);
-	bytes = 1;
-	while (bytes != 0 && !ft_strchr(save, '\n'))
+	size = 1;
+	while (size != 0 && !ft_strchr(save, '\n'))
 	{
-		bytes = read(fd, buff, BUFFER_SIZE);
-		if (bytes == -1)
+		size = read(fd, buffer, BUFFER_SIZE);
+		if (size == -1)
 		{
-			free(buff);
+			free(buffer);
 			return (NULL);
 		}
-		buff[bytes] = 0;
-		save = ft_strjoin(save, buff);
+		buffer[size] = '\0';
+		save = ft_strjoin(save, buffer);
 	}
-	free(buff);
+	free(buffer);
 	return (save);
 }
 
@@ -84,31 +84,10 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	save = ft_read_save(fd, save);
+	save = ft_read_join(fd, save);
 	if (!save)
 		return (NULL);
-	line = ft_get_line(save);
+	line = ft_print_line(save);
 	save = ft_saver(save);
 	return (line);
 }
-
-// #include <stdio.h>
-// #include <fcntl.h>
-// int main()
-// {
-// 	int	fd = open("test.txt", O_RDONLY);
-// 	char	*line;
-
-// 	while (1)
-// 	{
-// 		line = get_next_line(fd);
-// 		if (line != NULL)
-// 		{
-// 			printf("%s", line);
-// 			free(line);
-// 		}
-// 		if (line == NULL)
-// 			break;
-// 	}
-// 	return (0);
-// }
